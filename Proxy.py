@@ -33,7 +33,7 @@ except:
 try:
   # Bind the the server socket to a host and port
   # ~~~~ INSERT CODE ~~~~
-  Server_Socket.bind(proxyHost, proxyPort)
+  Server_Socket.bind((proxyHost, proxyPort))
   # ~~~~ END CODE INSERT ~~~~
   print ('Port is bound')
 except:
@@ -108,7 +108,8 @@ while True:
     resource = resource + resourceParts[1]
 
   print ('Requested Resource:\t' + resource)
-
+  ##flaggin if request is cache MISS 
+  cache_hit = False 
   # Check if resource is in cache
   #sally: step 2.4: check if resource is in cache then fetch web object from here 
   try:
@@ -135,8 +136,10 @@ while True:
     cacheFile.close()
     print ('Sent to the client:')
     print ('> ' + cacheData)
+    cache_hit = True
   except:
     # cache miss.  Get resource from origin server
+    print('Cache miss: File not found in cache')
     originServerSocket = None
     # Create a socket to connect to origin server
     # and store in originServerSocket
