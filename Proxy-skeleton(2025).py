@@ -43,7 +43,8 @@ except:
 try:
   # Listen on the server socket
   # ~~~~ INSERT CODE ~~~~
-  #temporarily 3 in queues? need to double-check 
+  #Temporarily 3 in queues? need to double-check 
+  #Code for listening for client connections
   Server_Socket.listen(3)
   # ~~~~ END CODE INSERT ~~~~
   print ('Listening to socket')
@@ -59,6 +60,8 @@ while True:
   # Accept connection from client and store in the clientSocket
   try:
     # ~~~~ INSERT CODE ~~~~
+    #code to accept client connection 
+    clientSocket, addr = Server_Socket.accept()
     # ~~~~ END CODE INSERT ~~~~
     print ('Received a connection')
   except:
@@ -69,6 +72,8 @@ while True:
   # and store it in the variable: message_bytes
   # sally: Step 1.1: Where the proxy receives and parses the HTTP request from the client
   # ~~~~ INSERT CODE ~~~~
+  # Code to recieve clients' requests and store it in message_bytes
+  message_bytes = clientSocket.recv(BUFFER_SIZE)
   # ~~~~ END CODE INSERT ~~~~
   message = message_bytes.decode('utf-8')
   print ('Received request:')
@@ -124,6 +129,8 @@ while True:
     # Send back response to client 
     #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
     # ~~~~ INSERT CODE ~~~~
+    #Code to send the cacheDAta to client
+    clientSocket.sendall(''.join(cacheData).encode())
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
