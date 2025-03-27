@@ -156,11 +156,14 @@ while True:
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
       #Get port number from original server by splitting the hostname 
-      hostname_index= hostname.split(':')
-      originserver_hostname = hostname_index[0]
-      port = int(hostname_index[1])
-      
-      originServerSocket.connect((address, port))
+      if ':' in hostname:
+        hostname_parts = hostname.split(':')
+        hostname = hostname_parts[0]
+        port = int(hostname_parts[1])
+      else:
+    # Default to port 80 for HTTP if not specified
+        port = 80
+        originServerSocket.connect((address, port))
       
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
