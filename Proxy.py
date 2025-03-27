@@ -155,6 +155,7 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
+      #Get port number from original server by splitting the hostname 
       hostname_index= hostname.split(':')
       originserver_hostname = hostname_index[0]
       port = int(hostname_index[1])
@@ -171,7 +172,8 @@ while True:
       # originServerRequest is the first line in the request and
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
-
+      originServerRequest = f"{method} {resource} HTTP/1.1"
+      originServerRequestHeader = f"Host: {hostname}\r\nConnection: close"
       # ~~~~ END CODE INSERT ~~~~
 
       # Construct the request to send to the origin server
@@ -192,12 +194,21 @@ while True:
 
       # Get the response from the origin server
       # ~~~~ INSERT CODE ~~~~
+      #response in byte string 
+      origin_server_response = b""
+      while True:
+      #each chunk received from original server is appended onto original_server_response to send to clients 
+            origin_data = originServerSocket.recv(BUFFER_SIZE)
+            if not origin_data:
+              break
+            origin_server_response += origin_data
       # ~~~~ END CODE INSERT ~~~~
 
       # Send the response to the client
       #sally: step 1.2: Sending the repsonse back to client (if cache MISS)
-      #sally: step 1.3: modify to differentiate from original server resposne 
+      #sally: step 1.3: modify to differentiate from proxy server resposne 
       # ~~~~ INSERT CODE ~~~~
+      clientSocket.sendall(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
 
       # Create a new file in the cache for the requested file.
@@ -209,6 +220,7 @@ while True:
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
+      cacheFile.write(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
       print ('cache file closed')
