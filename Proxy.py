@@ -131,7 +131,8 @@ while True:
     #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
-    clientSocket.sendall(cacheData)  
+    #encode text back to bytes 
+    clientSocket.sendall(cacheData.encode('utf-8')) 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
