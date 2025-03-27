@@ -108,8 +108,6 @@ while True:
     resource = resource + resourceParts[1]
 
   print ('Requested Resource:\t' + resource)
-  ##flaggin if request is cache MISS 
-  cache_hit = False 
   # Check if resource is in cache
   #sally: step 2.4: check if resource is in cache then fetch web object from here 
   try:
@@ -137,7 +135,6 @@ while True:
     cacheFile.close()
     print ('Sent to the client:')
     print ('> ' + cacheData)
-    cache_hit = True
   except:
     # cache miss.  Get resource from origin server
     print('Cache miss: File not found in cache')
@@ -225,6 +222,7 @@ while True:
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
+
       cacheFile.write(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
