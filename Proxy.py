@@ -144,6 +144,7 @@ while True:
     # sally: step 2.4: Cache miss, fetches web object from origin server 
     # ~~~~ INSERT CODE ~~~~
     #Step 7. create original server connection. 
+    #https://docs.python.org/2.7/library/socket.html
     originServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # ~~~~ END CODE INSERT ~~~~
 
