@@ -153,7 +153,8 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
-      #Get port number from original server by splitting the hostname 
+      # Get port number from original server by splitting the hostname 
+      # RFC: 3.2.3 URI comparison
       if ':' in hostname:
         hostname_parts = hostname.split(':')
         hostname = hostname_parts[0]
@@ -174,6 +175,7 @@ while True:
       # originServerRequest is the first line in the request and
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
+      # RFC 5.1 Request Line
       originServerRequest = f"{method} {resource} HTTP/1.1"
       originServerRequestHeader = f"Host: {hostname}\r\nConnection: close"
       # ~~~~ END CODE INSERT ~~~~
@@ -222,7 +224,6 @@ while True:
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
-
       cacheFile.write(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
       cacheFile.close()
