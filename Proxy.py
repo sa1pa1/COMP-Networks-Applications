@@ -123,7 +123,7 @@ while True:
     
     # Check wether the file is currently in the cache
     cacheFile = open(cacheLocation, "r")
-    cacheData = cacheFile.readlines()
+    cacheData = cacheFile.read()
 
     print ('Cache hit! Loading from cache file: ' + cacheLocation)
     # ProxyServer finds a cache hit
@@ -131,7 +131,7 @@ while True:
     #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
-    clientSocket.sendall(''.join(cacheData).encode())
+    clientSocket.sendall(cacheData)  
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
@@ -163,7 +163,8 @@ while True:
       else:
     # Default to port 80 for HTTP if not specified
         port = 80
-        originServerSocket.connect((address, port))
+        
+      originServerSocket.connect((address, port))
       
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
