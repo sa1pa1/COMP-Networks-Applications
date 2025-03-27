@@ -145,6 +145,8 @@ while True:
     # and store in originServerSocket
     # sally: step 2.4: Cache miss, fetches web object from origin server 
     # ~~~~ INSERT CODE ~~~~
+    #Step 7. create original server connection. 
+    originServerSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     # ~~~~ END CODE INSERT ~~~~
 
     print ('Connecting to:\t\t' + hostname + '\n')
@@ -153,6 +155,12 @@ while True:
       address = socket.gethostbyname(hostname)
       # Connect to the origin server
       # ~~~~ INSERT CODE ~~~~
+      hostname_index= hostname.split(':')
+      originserver_hostname = hostname_index[0]
+      port = int(hostname_index[1])
+      
+      originServerSocket.connect((address, port))
+      
       # ~~~~ END CODE INSERT ~~~~
       print ('Connected to origin Server')
 
@@ -163,6 +171,7 @@ while True:
       # originServerRequest is the first line in the request and
       # originServerRequestHeader is the second line in the request
       # ~~~~ INSERT CODE ~~~~
+
       # ~~~~ END CODE INSERT ~~~~
 
       # Construct the request to send to the origin server
