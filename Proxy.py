@@ -144,6 +144,8 @@ while True:
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
     #encode text back to bytes 
+    max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
+    
     clientSocket.sendall(cacheData.encode('utf-8')) 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
@@ -227,6 +229,7 @@ while True:
       #sally: step 1.2: Sending the repsonse back to client (if cache MISS)
       #sally: step 1.3: modify to differentiate from proxy server resposne 
       # ~~~~ INSERT CODE ~~~~
+
       clientSocket.sendall(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
 
