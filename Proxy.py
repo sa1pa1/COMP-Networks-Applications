@@ -55,7 +55,7 @@ except:
 # RFC Section 13: caching in HTTP conditions 
 # checking if it is a no-store or no-cache
 def should_cache(response_bytes):
-  headers = response_bytes.split(b'\r\n\r\n')[0].deccode('utf-8')
+  headers = response_bytes.split(b'\r\n\r\n')[0].decode('utf-8')
 
   # MUST NOT cache if no-store is present
   if re.search(r'Cache-Control:.*?no-store', headers, re.IGNORECASE):
@@ -64,11 +64,6 @@ def should_cache(response_bytes):
   # MUST NOT cache private responses in a shared cache (proxy)
   if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
         return False
-  
-  if ('Authorization' in request and 
-        not re.search(r'Cache-Control:.*?(public|must-revalidate)', headers, re.IGNORECASE)):
-        return False
-        
   return True
 
 # continuously accept connections
@@ -236,18 +231,19 @@ while True:
       # ~~~~ END CODE INSERT ~~~~
 
       # Create a new file in the cache for the requested file.
-      cacheDir, file = os.path.split(cacheLocation)
-      print ('cached directory ' + cacheDir)
-      if not os.path.exists(cacheDir):
-        os.makedirs(cacheDir)
-      cacheFile = open(cacheLocation, 'wb')
+      if should_cache(origin_server_response):
+        cacheDir, file = os.path.split(cacheLocation)
+        print ('cached directory ' + cacheDir)
+        if not os.path.exists(cacheDir):
+          os.makedirs(cacheDir)
+        cacheFile = open(cacheLocation, 'wb')
 
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
-      cacheFile.write(origin_server_response)
+        cacheFile.write(origin_server_response) 
       # ~~~~ END CODE INSERT ~~~~
-      cacheFile.close()
-      print ('cache file closed')
+        cacheFile.close()
+        print ('cache file closed')
 
       # finished communicating with origin server - shutdown socket writes
       print ('origin response received. Closing sockets')
