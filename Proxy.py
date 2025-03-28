@@ -5,6 +5,7 @@ import sys
 import os
 import argparse
 import re
+import time
 #sally: 
 # 1MB buffer size
 BUFFER_SIZE = 1000000
@@ -143,9 +144,30 @@ while True:
     #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
-    #encode text back to bytes 
-    max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
-    
+    #checking max_age 
+    is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
+    # If max-age is found
+    if is_max_age:
+        max_age = int(is_max_age.group(1))
+        try:
+            #create a timestamp file 
+            timestamp_file = cacheLocation + ".age"
+            # Open and read the timestamp file
+            with open(timestamp_file, "r") as tf:
+                #read in cached time 
+                cached_time = float(tf.read().strip())
+             #get current time to measure agaisnt cache time   
+            current_time = time.time()
+            #calculate time until expired
+            if current_time - cached_time > max_age:
+                #print if expired
+                print(f"Cache expired, max-age={max_age}")
+                #raise exception to get new copy 
+                raise Exception("Cache expired")
+        except Exception as e:
+            raise 
+
+        
     clientSocket.sendall(cacheData.encode('utf-8')) 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
@@ -229,7 +251,6 @@ while True:
       #sally: step 1.2: Sending the repsonse back to client (if cache MISS)
       #sally: step 1.3: modify to differentiate from proxy server resposne 
       # ~~~~ INSERT CODE ~~~~
-
       clientSocket.sendall(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
 
