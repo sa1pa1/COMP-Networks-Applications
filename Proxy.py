@@ -61,7 +61,16 @@ def should_cache(response_bytes):
   if re.search(r'Cache-Control:.*?no-store', headers, re.IGNORECASE):
       return False
   
+  # MUST NOT cache private responses in a shared cache (proxy)
+  if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
+        return False
   
+  if ('Authorization' in request and 
+        not re.search(r'Cache-Control:.*?(public|must-revalidate)', headers, re.IGNORECASE)):
+        return False
+        
+  return True
+
 # continuously accept connections
 while True:
   print ('Waiting for connection...')
