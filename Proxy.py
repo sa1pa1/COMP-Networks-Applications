@@ -150,7 +150,7 @@ while True:
     if is_max_age:
         max_age = int(is_max_age.group(1))
         try:
-            #create a timestamp file 
+            #path to timestamp
             timestamp_file = cacheLocation + ".age"
             # Open and read the timestamp file
             with open(timestamp_file, "r") as tf:
@@ -265,6 +265,11 @@ while True:
       # Save origin server response in the cache file
       # ~~~~ INSERT CODE ~~~~
         cacheFile.write(origin_server_response) 
+        # Save timestamp for max-age calculations
+        timestamp_file = cacheLocation + ".age"
+        #open and check if response is still usable
+        with open(timestamp_file, "w") as tf:
+            tf.write(str(time.time()))
       # ~~~~ END CODE INSERT ~~~~
         cacheFile.close()
         print ('cache file closed')
