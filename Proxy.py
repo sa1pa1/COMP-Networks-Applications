@@ -52,6 +52,16 @@ except:
   print ('Failed to listen')
   sys.exit()
 
+# RFC Section 13: caching in HTTP conditions 
+# checking if it is a no-store or no-cache
+def should_cache(response_bytes):
+  headers = response_bytes.split(b'\r\n\r\n')[0].deccode('utf-8')
+
+  # MUST NOT cache if no-store is present
+  if re.search(r'Cache-Control:.*?no-store', headers, re.IGNORECASE):
+      return False
+  
+  
 # continuously accept connections
 while True:
   print ('Waiting for connection...')
