@@ -56,20 +56,38 @@ except:
 # RFC Section 13: caching in HTTP conditions 
 # checking if it is a no-store or no-cache
 def should_cache(response_bytes):
-  headers = response_bytes.split(b'\r\n\r\n')[0].decode('utf-8')
+  try: 
+    headers = response_bytes.split(b'\r\n\r\n')[0].decode('utf-8')
+    status_line = headers.split('\r\n')[0]
+    print(f"HEADERS: {headers}")
 
-  # MUST NOT cache if no-store is present
-  if re.search(r'Cache-Control:.*?no-store', headers, re.IGNORECASE):
-      return False
-  
-  # MUST NOT cache private responses in a shared cache (proxy)
-  if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
-      return False
-  
+    #checking for a 302 response - only cacheable if indicated by Cache-Control 
+    if re.search(r'HTTP/\d\.\d\s+302', status_line, re.IGNORECASE):
+      print('302 response detected')
+
+      #check cache-control or expires
+      has_cache_control = re.search(r'Cache-Control:', headers, re.IGNORECASE)
+      has_expires = re.search(r'Expires:', headers, re.IGNORECASE)
+
+      if not (has_cache_control or has_expires):
+          print('no cache-directives, dont cache')
+          return False #dont cache wihtout these headings 
+    # MUST NOT cache if no-store is present
+    if re.search(r'Cache-Control:.*?no-store', headers, re.IGNORECASE):
+        return False
+    
+    # MUST NOT cache private responses in a shared cache (proxy)
+    if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
+        return False
+    
       # If 'no-cache' is present, cache but require revalidation
-  if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
-       return "revalidate"
-  return True
+    if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
+        print("Response with no-cache directive, revalidating...")
+        return "revalidate"
+    return True
+  except Exception as e:
+      print(f"Error in should_cache: {e}")
+      return False
 
 # continuously accept connections
 while True:
@@ -142,12 +160,20 @@ while True:
     cacheFile = open(cacheLocation, "r")
     cacheData = cacheFile.read()
 
-    print ('Cache hit! Loading from cache file: ' + cacheLocation)
-    # ProxyServer finds a cache hit
-    # Send back response to client 
-    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
-    # ~~~~ INSERT CODE ~~~~
-    #Code to send the cacheDAta to client
+    # Check if we need to revalidate based on cache directives
+    should_revalidate = False
+    # Check for cached 302 responses
+    is_302 = re.search(r'HTTP/\d\.\d\s+302', cacheData, re.IGNORECASE)
+    if is_302:
+      print("Cached response is a 302 Found - checking rules...")
+      # Check if the 302 has Cache-Control or Expires
+      has_cache_control = re.search(r'Cache-Control:', cacheData, re.IGNORECASE)
+      has_expires = re.search(r'Expires:', cacheData, re.IGNORECASE)
+      
+      if not (has_cache_control or has_expires):
+        print("Cached 302 has no caching directives - MUST revalidate")
+        raise Exception("302: NO caching directives")
+
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
     # If max-age is found
@@ -170,8 +196,17 @@ while True:
                 raise Exception("Cache expired")
         except Exception as e:
             raise 
+    # Check for must-revalidate directive
+    if re.search(r'Cache-Control:.*?(must-revalidate|no-cache)', cacheData, re.IGNORECASE):
+        print("Response requires revalidation")
+        should_revalidate = True
 
-        
+    print ('Cache hit! Loading from cache file: ' + cacheLocation)
+    # ProxyServer finds a cache hit
+    # Send back response to client 
+    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
+    # ~~~~ INSERT CODE ~~~~
+    #Code to send the cacheDAta to client
     clientSocket.sendall(cacheData.encode('utf-8')) 
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
@@ -259,24 +294,26 @@ while True:
       # ~~~~ END CODE INSERT ~~~~
 
       # Create a new file in the cache for the requested file.
-      if should_cache(origin_server_response):
-        cacheDir, file = os.path.split(cacheLocation)
-        print ('cached directory ' + cacheDir)
-        if not os.path.exists(cacheDir):
-          os.makedirs(cacheDir)
-        cacheFile = open(cacheLocation, 'wb')
+      # Create a new file in the cache for the requested file.
+      decide_caching = should_cache(origin_server_response)
+      if decide_caching:
+          cacheDir, file = os.path.split(cacheLocation)
+          print('cached directory ' + cacheDir)
+          if not os.path.exists(cacheDir):
+              os.makedirs(cacheDir)
+          cacheFile = open(cacheLocation, 'wb')
 
-      # Save origin server response in the cache file
-      # ~~~~ INSERT CODE ~~~~
-        cacheFile.write(origin_server_response) 
-        # Save timestamp for max-age calculations
-        timestamp_file = cacheLocation + ".age"
-        #open and check if response is still usable
-        with open(timestamp_file, "w") as tf:
-            tf.write(str(time.time()))
-      # ~~~~ END CODE INSERT ~~~~
-        cacheFile.close()
-        print ('cache file closed')
+          # Save origin server response in the cache file
+          # ~~~~ INSERT CODE ~~~~
+          cacheFile.write(origin_server_response) 
+          # Save timestamp for max-age calculations
+          timestamp_file = cacheLocation + ".age"
+          #open and check if response is still usable
+          with open(timestamp_file, "w") as tf:
+              tf.write(str(time.time()))
+          # ~~~~ END CODE INSERT ~~~~
+          cacheFile.close()
+          print('cache file closed')
 
       # finished communicating with origin server - shutdown socket writes
       print ('origin response received. Closing sockets')
