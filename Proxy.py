@@ -64,7 +64,11 @@ def should_cache(response_bytes):
   
   # MUST NOT cache private responses in a shared cache (proxy)
   if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
-        return False
+      return False
+  
+      # If 'no-cache' is present, cache but require revalidation
+  if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
+       return "revalidate"
   return True
 
 # continuously accept connections
