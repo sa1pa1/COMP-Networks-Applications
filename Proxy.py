@@ -88,6 +88,20 @@ def should_cache(response_bytes):
   except Exception as e:
       print(f"Error in should_cache: {e}")
       return False
+  
+#Get validators for no-cache directives 
+def validators(cacheData):
+   validators = {}
+   is_etag = re.search(r'ETag:\s*"([^"]+)"', cacheData, re.IGNORECASE)
+   is_last_modified = re.search(r'Last-Modified:\s*(.+)', cacheData, re.IGNORECASE)
+
+   if is_etag:
+      validators['etag'] = is_etag.group(1)
+
+   if is_last_modified:
+      validators['last-modified'] = is_last_modified.group(1)
+
+   return validators   
 
 # continuously accept connections
 while True:
