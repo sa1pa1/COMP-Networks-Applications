@@ -94,10 +94,10 @@ def validators(cacheData):
    validators = {}
    is_etag = re.search(r'ETag:\s*"([^"]+)"', cacheData, re.IGNORECASE)
    is_last_modified = re.search(r'Last-Modified:\s*(.+)', cacheData, re.IGNORECASE)
-
+  #grouping etag 
    if is_etag:
       validators['etag'] = is_etag.group(1)
-
+  #grouping last_modified 
    if is_last_modified:
       validators['last-modified'] = is_last_modified.group(1)
 
