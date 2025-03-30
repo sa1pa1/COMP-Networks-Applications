@@ -247,7 +247,52 @@ while True:
           
     if should_revalidate:
         print("Revalidating with original server...")
-        clientSocket.sendall(cacheData.encode('utf-8'))
+        # Get validators from cached response
+        cache_validators = validators(cacheData)
+
+        #open socket to revalidate 
+        revalidateSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        try:
+            # Get the IP address for a hostname
+            address = socket.gethostbyname(hostname)
+            
+            # Determine port
+            if ':' in hostname:
+                hostname_parts = hostname.split(':')
+                hostname = hostname_parts[0]
+                port = int(hostname_parts[1])
+            else:
+                port = 80
+                
+            # Connect to origin server
+            revalidateSocket.connect((address, port))
+
+    else:
+      clientSocket.sendall(cacheData.encode('utf-8'))
+          
+    if should_revalidate:
+        print("Revalidating with original server...")
+        # Get validators from cached response
+        cache_validators = validators(cacheData)
+
+        #open socket to revalidate 
+        revalidateSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        try:
+            # Get the IP address for a hostname
+            address = socket.gethostbyname(hostname)
+            
+            # Determine port
+            if ':' in hostname:
+                hostname_parts = hostname.split(':')
+                hostname = hostname_parts[0]
+                port = int(hostname_parts[1])
+            else:
+                port = 80
+                
+            # Connect to origin server
+            revalidateSocket.connect((address, port))
 
     else:
       clientSocket.sendall(cacheData.encode('utf-8'))
