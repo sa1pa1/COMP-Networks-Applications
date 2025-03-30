@@ -82,8 +82,8 @@ def should_cache(response_bytes):
     
       # If 'no-cache' is present, cache but require revalidation
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
-        print("Response with no-cache directive, revalidating...")
-        return "revalidate"
+        print("Response with no-cache directive, will revalidate")
+        return True
     return True
   except Exception as e:
       print(f"Error in should_cache: {e}")
@@ -174,20 +174,14 @@ while True:
     cacheFile = open(cacheLocation, "r")
     cacheData = cacheFile.read()
 
-    # Check if we need to revalidate based on cache directives
+    print ('Cache hit! Loading from cache file: ' + cacheLocation)
+    # ProxyServer finds a cache hit
+    # Send back response to client 
+    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
+    # ~~~~ INSERT CODE ~~~~
+    #Code to send the cacheDAta to client
+        # Check if we need to revalidate based on cache directives
     should_revalidate = False
-    # Check for cached 302 responses
-    is_302 = re.search(r'HTTP/\d\.\d\s+302', cacheData, re.IGNORECASE)
-    if is_302:
-      print("Cached response is a 302 Found - checking rules...")
-      # Check if the 302 has Cache-Control or Expires
-      has_cache_control = re.search(r'Cache-Control:', cacheData, re.IGNORECASE)
-      has_expires = re.search(r'Expires:', cacheData, re.IGNORECASE)
-      
-      if not (has_cache_control or has_expires):
-        print("Cached 302 has no caching directives - MUST revalidate")
-        raise Exception("302: NO caching directives")
-
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
     # If max-age is found
@@ -212,16 +206,16 @@ while True:
             raise 
     # Check for must-revalidate directive
     if re.search(r'Cache-Control:.*?(must-revalidate|no-cache)', cacheData, re.IGNORECASE):
-        print("Response requires revalidation")
+        print("Response requires revalidation, revalidating...")
         should_revalidate = True
 
-    print ('Cache hit! Loading from cache file: ' + cacheLocation)
-    # ProxyServer finds a cache hit
-    # Send back response to client 
-    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
-    # ~~~~ INSERT CODE ~~~~
-    #Code to send the cacheDAta to client
-    clientSocket.sendall(cacheData.encode('utf-8')) 
+    if should_revalidate:
+        print("Revalidating with original server...")
+        clientSocket.sendall(cacheData.encode('utf-8'))
+
+    else:
+      clientSocket.sendall(cacheData.encode('utf-8'))
+          
     # ~~~~ END CODE INSERT ~~~~
     cacheFile.close()
     print ('Sent to the client:')
@@ -307,7 +301,6 @@ while True:
       clientSocket.sendall(origin_server_response)
       # ~~~~ END CODE INSERT ~~~~
 
-      # Create a new file in the cache for the requested file.
       # Create a new file in the cache for the requested file.
       decide_caching = should_cache(origin_server_response)
       if decide_caching:
