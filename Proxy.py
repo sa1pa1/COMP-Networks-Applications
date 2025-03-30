@@ -267,22 +267,33 @@ while True:
                 if not revalidate_data:
                     break
                 revalidate_response += revalidate_data
-            print("Resource modified, using new version")
-            # Update cache
-            cacheFile = open(cacheLocation, 'wb')
-            cacheFile.write(revalidate_response)
-            cacheFile.close()
+            
+             # Check if response is 304 Not Modified
+            headers = revalidate_response.split(b'\r\n\r\n')[0].decode('utf-8')
+            status_line = headers.split('\r\n')[0]
+
+            if "304 Not Modified" in status_line:
+                print("304 not modified, use cached version")
+                clientSocket.sendall(cacheData.encode('utf-8'))
+            else:
+                print("Resource modified, using new version")
+                # Update cache
+                cacheFile = open(cacheLocation, 'wb')
+                cacheFile.write(revalidate_response)
+                cacheFile.close()
                 
-            # Save timestamp for max-age calculations
-            timestamp_file = cacheLocation + ".age"
-            with open(timestamp_file, "w") as tf:
-                tf.write(str(time.time()))
+                # Save timestamp for max-age calculations
+                timestamp_file = cacheLocation + ".age"
+                with open(timestamp_file, "w") as tf:
+                    tf.write(str(time.time()))
                     
-            # Send new response to client
-            clientSocket.sendall(revalidate_response)
+                # Send new response to client
+                clientSocket.sendall(revalidate_response)
                 
-            # Close revalidation socket
             revalidateSocket.close()
+        except OSError as err:
+                print(f"Revalidation failed: {err.strerror}, falling back..")
+                clientSocket.sendall(cacheData.encode('utf-8'))
 
     else:
       clientSocket.sendall(cacheData.encode('utf-8'))
