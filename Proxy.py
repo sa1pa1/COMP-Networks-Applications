@@ -183,13 +183,6 @@ while True:
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
         # Check if we need to revalidate based on cache directives
-    print ('Cache hit! Loading from cache file: ' + cacheLocation)
-    # ProxyServer finds a cache hit
-    # Send back response to client 
-    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
-    # ~~~~ INSERT CODE ~~~~
-    #Code to send the cacheDAta to client
-        # Check if we need to revalidate based on cache directives
     should_revalidate = False
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
