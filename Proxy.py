@@ -216,7 +216,6 @@ while True:
     # Check for must-revalidate directive
     if re.search(r'Cache-Control:.*?(must-revalidate|no-cache)', cacheData, re.IGNORECASE):
         print("Response requires revalidation, revalidating...")
-        print("Response requires revalidation, revalidating...")
         should_revalidate = True
 
     if should_revalidate:
@@ -241,6 +240,42 @@ while True:
                 
             # Connect to origin server
             revalidateSocket.connect((address, port))
+
+             # Create request
+            revalidateRequest = f"{method} {resource} HTTP/1.1\r\n"
+            revalidateRequestHeader = f"Host: {hostname}\r\nConnection: close\r\n{conditionalHeaders}"
+            request = revalidateRequest + revalidateRequestHeader + "\r\n"
+            
+            print("Sending revalidation request to origin server:")
+            for line in request.split('\r\n'):
+                print('> ' + line)
+                
+            # Send revalidation request
+            revalidateSocket.sendall(request.encode())
+            
+            # Get response
+            revalidate_response = b""
+            while True:
+                revalidate_data = revalidateSocket.recv(BUFFER_SIZE)
+                if not revalidate_data:
+                    break
+                revalidate_response += revalidate_data
+            print("Resource modified, using new version")
+            # Update cache
+            cacheFile = open(cacheLocation, 'wb')
+            cacheFile.write(revalidate_response)
+            cacheFile.close()
+                
+            # Save timestamp for max-age calculations
+            timestamp_file = cacheLocation + ".age"
+            with open(timestamp_file, "w") as tf:
+                tf.write(str(time.time()))
+                    
+            # Send new response to client
+            clientSocket.sendall(revalidate_response)
+                
+            # Close revalidation socket
+            revalidateSocket.close()
 
     else:
       clientSocket.sendall(cacheData.encode('utf-8'))
