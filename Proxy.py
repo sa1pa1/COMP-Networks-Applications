@@ -241,6 +241,13 @@ while True:
             # Connect to origin server
             revalidateSocket.connect((address, port))
 
+            # Create conditional request headers based on available validators
+            conditionalHeaders = ""
+            if 'etag' in cache_validators:
+                conditionalHeaders += f"If-None-Match: \"{cache_validators['etag']}\"\r\n"
+            if 'last-modified' in cache_validators:
+                conditionalHeaders += f"If-Modified-Since: {cache_validators['last-modified']}\r\n"
+
              # Create request
             revalidateRequest = f"{method} {resource} HTTP/1.1\r\n"
             revalidateRequestHeader = f"Host: {hostname}\r\nConnection: close\r\n{conditionalHeaders}"
@@ -276,58 +283,6 @@ while True:
                 
             # Close revalidation socket
             revalidateSocket.close()
-
-    else:
-      clientSocket.sendall(cacheData.encode('utf-8'))
-          
-    if should_revalidate:
-        print("Revalidating with original server...")
-        # Get validators from cached response
-        cache_validators = validators(cacheData)
-
-        #open socket to revalidate 
-        revalidateSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        try:
-            # Get the IP address for a hostname
-            address = socket.gethostbyname(hostname)
-            
-            # Determine port
-            if ':' in hostname:
-                hostname_parts = hostname.split(':')
-                hostname = hostname_parts[0]
-                port = int(hostname_parts[1])
-            else:
-                port = 80
-                
-            # Connect to origin server
-            revalidateSocket.connect((address, port))
-
-    else:
-      clientSocket.sendall(cacheData.encode('utf-8'))
-          
-    if should_revalidate:
-        print("Revalidating with original server...")
-        # Get validators from cached response
-        cache_validators = validators(cacheData)
-
-        #open socket to revalidate 
-        revalidateSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-        try:
-            # Get the IP address for a hostname
-            address = socket.gethostbyname(hostname)
-            
-            # Determine port
-            if ':' in hostname:
-                hostname_parts = hostname.split(':')
-                hostname = hostname_parts[0]
-                port = int(hostname_parts[1])
-            else:
-                port = 80
-                
-            # Connect to origin server
-            revalidateSocket.connect((address, port))
 
     else:
       clientSocket.sendall(cacheData.encode('utf-8'))
