@@ -84,6 +84,8 @@ def should_cache(response_bytes):
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
         print("Response with no-cache directive, will revalidate")
         return True
+        print("Response with no-cache directive, will revalidate")
+        return True
     return True
   except Exception as e:
       print(f"Error in should_cache: {e}")
@@ -181,6 +183,13 @@ while True:
     # ~~~~ INSERT CODE ~~~~
     #Code to send the cacheDAta to client
         # Check if we need to revalidate based on cache directives
+    print ('Cache hit! Loading from cache file: ' + cacheLocation)
+    # ProxyServer finds a cache hit
+    # Send back response to client 
+    #sally: step 1.2: Sending the repsonse back to client (if cache HIT)
+    # ~~~~ INSERT CODE ~~~~
+    #Code to send the cacheDAta to client
+        # Check if we need to revalidate based on cache directives
     should_revalidate = False
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
@@ -207,6 +216,7 @@ while True:
     # Check for must-revalidate directive
     if re.search(r'Cache-Control:.*?(must-revalidate|no-cache)', cacheData, re.IGNORECASE):
         print("Response requires revalidation, revalidating...")
+        print("Response requires revalidation, revalidating...")
         should_revalidate = True
 
     if should_revalidate:
@@ -231,6 +241,13 @@ while True:
                 
             # Connect to origin server
             revalidateSocket.connect((address, port))
+
+    else:
+      clientSocket.sendall(cacheData.encode('utf-8'))
+          
+    if should_revalidate:
+        print("Revalidating with original server...")
+        clientSocket.sendall(cacheData.encode('utf-8'))
 
     else:
       clientSocket.sendall(cacheData.encode('utf-8'))
