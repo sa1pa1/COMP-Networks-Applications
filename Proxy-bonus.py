@@ -1,3 +1,51 @@
+# BONUS MARK IMPLEMENTATIONS 
+# ########################################################################## 
+# QUESTION 1: Check the Expires header of cached objects to determine if a 
+# new copy is needed from the origin server instead of just sending back the 
+# cached copy (2 marks)
+#
+# HOW I IMPLEMENT THIS:  
+# 1. Extracts the Expires header value from the initial response response, 
+# this is in should_cache function as it checks before caching if content is fresh
+#     - Log the timestamp value for comparision
+#
+# 2. Parses the HTTP date format 
+#
+# 3. Compares the expiration time against current time
+#    - Determines if the cached resource is still fresh
+#
+# 4. Takes appropriate action based on freshness
+#    - Fresh content: serves from cache with informative logging
+#    - Expired content: raises an exception to trigger origin server fetch
+#
+#  Finally, adding the same logic after cache hit to ensure that the cached content
+#  goes through the same check.
+
+# ########################################################################## 
+# QUESTION 3: The current proxy only handles URLs of the form hostname/file. 
+# Add the ability to handle origin server ports that are specified in the URL,
+#  i.e. hostname:portnumber/file (2 marks)
+#
+# HOW I IMPLEMENT THIS:  
+# Previously, the proxy only handled URLs in the form: hostname/file
+# Added support for URLs that include port numbers: hostname:portnumber/file
+# Example: httpbin.org:8080/get
+#
+# Implementation details:
+# 1. Added code to extract the port number from the hostname
+# Previously, I have done this to connection to original server. (REF: line 437)
+#    - Store original hostname (with port) 
+#    - Parse out the port number from the hostname 
+#    - Default to port 80
+#
+# 2. Modified cache directory structure
+#    - Now using the hostname:port as the cache directory name 
+#       -> ensuring ports are differentiated 
+#
+# 3. Updated origin server connection to use the extracted port
+#    - Connection is made to the correct port on the destination server
+# ########################################################################## 
+
 # Include the libraries for socket and system calls
 # sally: Identifying the interactions in step 1 and 2. 
 import socket
