@@ -1,12 +1,12 @@
 # Include the libraries for socket and system calls
 # sally: Identifying the interactions in step 1 and 2. 
-import datetime
 import socket
 import sys
 import os
 import argparse
 import re
 import time
+import email.utils
 
 #sally: 
 # 1MB buffer size
@@ -91,14 +91,17 @@ def should_cache(response_bytes):
     #using the same method as extracting headers from other parts 
     is_expiry = re.search(r'Expires:\s*(.+?)(\r\n|\n)', headers, re.IGNORECASE)
     #group the expiry 
-    expires_date_str = is_expiry.group(1)
+    expires_date_str = is_expiry.group(1).strip()
+    expires_date = email.utils.parsedate(expires_date_str)
 
     #if there is expires date, compare
-    if expires_date_str:
+    if expires_date:
        #with time now 
-       now = datetime.now()
+       expires = time.mktime(expires_date)
+       #chane datetime to time to match with expires timestamp 
+       now = time.time()
        #if now is after expiry header
-       if now > expires_date_str:
+       if now > expires:
           print(f"Cache expired (Expires: {expires_date_str})")
             # Cache expired - fetch fresh copy
           raise Exception("Expiry header: Cache expired")
