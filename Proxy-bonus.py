@@ -83,7 +83,7 @@ def should_cache(response_bytes):
     if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
         return False
     
-    # Extract Expires header if present
+     # Extract Expires header if present
     #############################################################################
     # BONUS MARK (1) Expires header of cached objects to determine 
     # if a new copy is needed from the origin server instead of just 
@@ -91,26 +91,26 @@ def should_cache(response_bytes):
     #using the same method as extracting headers from other parts 
     is_expiry = re.search(r'Expires:\s*(.+?)(\r\n|\n)', headers, re.IGNORECASE)
     #group the expiry 
-    expires_date_str = is_expiry.group(1).strip()
-    expires_date = email.utils.parsedate(expires_date_str)
+    if is_expiry:
+        expires_date_str = is_expiry.group(1).strip()
+        expires_date = email.utils.parsedate(expires_date_str)
 
-    #if there is expires date, compare
-    if expires_date:
-       #with time now 
-       expires = time.mktime(expires_date)
-       #chane datetime to time to match with expires timestamp 
-       now = time.time()
-       #if now is after expiry header
-       if now > expires:
-          print(f"Cache expired (Expires: {expires_date_str})")
-            # Cache expired - fetch fresh copy
-          raise Exception("Expiry header: Cache expired")
-       else:
-          print(f"Expiry header: (Expires: {expires_date_str})")
+        #if there is expires date, compare
+        if expires_date:
+        #with time now 
+            expires = time.mktime(expires_date)
+        #chane datetime to time to match with expires timestamp 
+            now = time.time()
+        #if now is after expiry header
+            if now > expires:
+                print(f"Cache expired (Expires: {expires_date_str})")
+                # Cache expired - fetch fresh copy
+                raise Exception("Expiry header: Cache expired")
+            else:
+                print(f"Expiry header: (Expires: {expires_date_str})")
 
-    else:
-        print(f"Could not parse Expiry: {expires_date_str}")     
-    #############################################################################
+        else:
+            print(f"Could not parse Expiry: {expires_date_str}")  
 
       # If 'no-cache' is present, cache but require revalidation
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
@@ -216,6 +216,39 @@ while True:
     #Code to send the cacheDAta to client
         # Check if we need to revalidate based on cache directives
     should_revalidate = False
+
+    # Extract Expires header if present
+    #############################################################################
+    # BONUS MARK (1) Expires header of cached objects to determine 
+    # if a new copy is needed from the origin server instead of just 
+    # sending back the cached copy 
+    #using the same method as extracting headers from other parts 
+    is_expiry = re.search(r'Expires:\s*(.+?)(\r\n|\n)', cacheData, re.IGNORECASE)
+    #group the expiry 
+    if is_expiry:
+        expires_date_str = is_expiry.group(1).strip()
+        expires_date = email.utils.parsedate(expires_date_str)
+
+        #if there is expires date, compare
+        if expires_date:
+        #with time now 
+            expires = time.mktime(expires_date)
+        #chane datetime to time to match with expires timestamp 
+            now = time.time()
+        #if now is after expiry header
+            if now > expires:
+                print(f"Cache expired (Expires: {expires_date_str})")
+                # Cache expired - fetch fresh copy
+                raise Exception("Expiry header: Cache expired")
+            else:
+                print(f"Expiry header: (Expires: {expires_date_str})")
+
+        else:
+            print(f"Could not parse Expiry: {expires_date_str}")  
+
+    #############################################################################
+    
+
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
     # If max-age is found
