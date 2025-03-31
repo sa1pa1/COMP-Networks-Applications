@@ -1,5 +1,6 @@
 # Include the libraries for socket and system calls
 # sally: Identifying the interactions in step 1 and 2. 
+import datetime
 import socket
 import sys
 import os
@@ -82,6 +83,32 @@ def should_cache(response_bytes):
     if re.search(r'Cache-Control:.*?private', headers, re.IGNORECASE):
         return False
     
+    # Extract Expires header if present
+    #############################################################################
+    # BONUS MARK (1) Expires header of cached objects to determine 
+    # if a new copy is needed from the origin server instead of just 
+    # sending back the cached copy 
+    #using the same method as extracting headers from other parts 
+    is_expiry = re.search(r'Expires:\s*(.+?)(\r\n|\n)', headers, re.IGNORECASE)
+    #group the expiry 
+    expires_date_str = is_expiry.group(1)
+
+    #if there is expires date, compare
+    if expires_date_str:
+       #with time now 
+       now = datetime.now()
+       #if now is after expiry header
+       if now > expires_date_str:
+          print(f"Cache expired (Expires: {expires_date_str})")
+            # Cache expired - fetch fresh copy
+          raise Exception("Expiry header: Cache expired")
+       else:
+          print(f"Expiry header: (Expires: {expires_date_str})")
+
+    else:
+        print(f"Could not parse Expiry: {expires_date_str}")     
+    #############################################################################
+
       # If 'no-cache' is present, cache but require revalidation
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
         print("Response with no-cache directive, will revalidate")
