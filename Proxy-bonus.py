@@ -85,6 +85,7 @@ def should_cache(response_bytes):
     
      # Extract Expires header if present
     #############################################################################
+    #############################################################################
     # BONUS MARK (1) Expires header of cached objects to determine 
     # if a new copy is needed from the origin server instead of just 
     # sending back the cached copy 
@@ -111,6 +112,8 @@ def should_cache(response_bytes):
 
         else:
             print(f"Could not parse Expiry: {expires_date_str}")  
+    #############################################################################
+    #############################################################################
 
       # If 'no-cache' is present, cache but require revalidation
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
@@ -185,6 +188,23 @@ while True:
   resourceParts = URI.split('/', 1)
   hostname = resourceParts[0]
   resource = '/'
+##################################################################################################
+###### BONUS (Q3): The current proxy only handles URLs of the form hostname/file. ##############
+# Add the ability to handle origin server ports that are specified in the URL, 
+# i.e. hostname:portnumber/file
+# Get from original socket implementation of extracting port and hostname
+    #initialise inital host name 
+  original_hostname = hostname  # Store the original hostname with port for cache location
+  if ':' in hostname:
+        #splitting port and host name into two components 
+        hostname_parts = hostname.split(':')
+        hostname = hostname_parts[0]
+        port = int(hostname_parts[1])
+  else:
+        #default fall back 
+        port = 80
+##################################################################################################
+##################################################################################################
 
   if len(resourceParts) == 2:
     # Resource is absolute URI with hostname and resource
@@ -195,7 +215,7 @@ while True:
   # Check if resource is in cache
   #sally: step 2.4: check if resource is in cache then fetch web object from here 
   try:
-    cacheLocation = './' + hostname + resource
+    cacheLocation = './' + original_hostname + resource #################### BONUS (Q3): changed hostname to original hostname ##########
     if cacheLocation.endswith('/'):
         cacheLocation = cacheLocation + 'default'
 
@@ -219,10 +239,11 @@ while True:
 
     # Extract Expires header if present
     #############################################################################
+    #############################################################################
     # BONUS MARK (1) Expires header of cached objects to determine 
     # if a new copy is needed from the origin server instead of just 
     # sending back the cached copy 
-    #using the same method as extracting headers from other parts 
+    #using the same method as extracting headers from 
     is_expiry = re.search(r'Expires:\s*(.+?)(\r\n|\n)', cacheData, re.IGNORECASE)
     #group the expiry 
     if is_expiry:
@@ -247,7 +268,7 @@ while True:
             print(f"Could not parse Expiry: {expires_date_str}")  
 
     #############################################################################
-    
+    #############################################################################
 
     #checking max_age 
     is_max_age = re.search(r'Cache-Control:.*?max-age=(\d+)', cacheData, re.IGNORECASE)
