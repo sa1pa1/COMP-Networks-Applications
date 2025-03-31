@@ -1,5 +1,6 @@
 # BONUS MARK IMPLEMENTATIONS 
 # ########################################################################## 
+# I have provided a second git log to track commits for bonus. (log-bonus.txt) - an extension to first log
 # QUESTION 1: Check the Expires header of cached objects to determine if a 
 # new copy is needed from the origin server instead of just sending back the 
 # cached copy (2 marks)
