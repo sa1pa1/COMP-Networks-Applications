@@ -6,6 +6,7 @@ import os
 import argparse
 import re
 import time
+
 #sally: 
 # 1MB buffer size
 BUFFER_SIZE = 1000000
@@ -57,6 +58,7 @@ except:
 # checking if it is a no-store or no-cache
 def should_cache(response_bytes):
   try: 
+    #retrieve headers 
     headers = response_bytes.split(b'\r\n\r\n')[0].decode('utf-8')
     status_line = headers.split('\r\n')[0]
     print(f"HEADERS: {headers}")
@@ -82,8 +84,6 @@ def should_cache(response_bytes):
     
       # If 'no-cache' is present, cache but require revalidation
     if re.search(r'Cache-Control:.*?no-cache', headers, re.IGNORECASE):
-        print("Response with no-cache directive, will revalidate")
-        return True
         print("Response with no-cache directive, will revalidate")
         return True
     return True
@@ -161,6 +161,7 @@ while True:
     resource = resource + resourceParts[1]
 
   print ('Requested Resource:\t' + resource)
+
   # Check if resource is in cache
   #sally: step 2.4: check if resource is in cache then fetch web object from here 
   try:
@@ -174,7 +175,7 @@ while True:
     
     # Check wether the file is currently in the cache
     cacheFile = open(cacheLocation, "r")
-    cacheData = cacheFile.read()
+    cacheData = cacheFile.readlines()
 
     print ('Cache hit! Loading from cache file: ' + cacheLocation)
     # ProxyServer finds a cache hit
@@ -395,7 +396,7 @@ while True:
               tf.write(str(time.time()))
           # ~~~~ END CODE INSERT ~~~~
           cacheFile.close()
-          print('cache file closed')
+          print ('cache file closed')
 
       # finished communicating with origin server - shutdown socket writes
       print ('origin response received. Closing sockets')
