@@ -1,0 +1,203 @@
+commit 761476b7b3bc40c456d8ca43e2b19fcc3dde1f1d
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 31 14:02:01 2025 +1030
+
+    remove extra files
+
+commit 1f17bf5d04807eaf2475091b42a5de45a464e7df
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 31 14:01:34 2025 +1030
+
+    fix cacheData to respond to cache hit
+
+commit 804400fb0d2e35711ba00075ab819d5bd1a35a04
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 31 12:56:47 2025 +1030
+
+    refactor code
+
+commit 6364ca1775e2511d8fa72ffa3604b2c54f6caf25
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 31 10:24:33 2025 +1030
+
+    remove double comments
+
+commit 2959de1ebb583850791d4362cffff68bdd45b4d8
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 21:36:01 2025 +1030
+
+    complete modification
+
+commit be0e990489c2e1004e1da0c142b97830a7005927
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 21:22:09 2025 +1030
+
+    conditional headers for etag and last modified
+
+commit 30c92d6a38434be74c17f78f63e3de84be830c9a
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 21:18:34 2025 +1030
+
+    added implenetation for revalidate socket
+
+commit 88ee151b43609e75bb884a720ab524befbda1f74
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 20:47:27 2025 +1030
+
+    revalidating socket
+
+commit d2bf50c4f06f830fde82e84e754abb1ef09a67be
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 17:35:30 2025 +1030
+
+    added implementation to revalidate cached response
+
+commit 319e5daa749616fb833c9d4e9a7da178b00c4400
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 20:47:27 2025 +1030
+
+    revalidating socket
+
+commit 07baaefb3c5714f00b46b34893282270740148ad
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sun Mar 30 17:35:30 2025 +1030
+
+    added implementation to revalidate cached response
+
+commit e0c3a2b52072e8d626cf9ed6c9fdd9229193b10a
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sat Mar 29 20:21:51 2025 +1030
+
+    add comments for validators function
+
+commit 751b200bec88c3cd119ce4e13beef98b46213d62
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sat Mar 29 20:21:11 2025 +1030
+
+    validators initialised
+
+commit 67fa146e58c5e12b8d9b31a7cfec711fde934b93
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sat Mar 29 19:55:52 2025 +1030
+
+    no-cache rules implemented - missing revalidation
+
+commit 2676ddd28d65b442e844e6e226a0990175054549
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Sat Mar 29 13:34:25 2025 +1030
+
+    implementation of no-cache, MUST condition
+
+commit df0f270632737684051c028df4dbd12aa25d1f4c
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 13:53:21 2025 +1030
+
+    Add implementation for when cache file, record time
+
+commit 857e31bafcfbf74e6a2ec1e5f6a0ce502560d3ac
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 13:43:12 2025 +1030
+
+    Function to check max age and exppiration
+
+commit 3625f14e2e23f722024baf76dda366c43520eb32
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 13:09:57 2025 +1030
+
+    define max-age
+
+commit 18de9f6d07cf164214389c71c69e5d9ea9429b4c
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 13:02:45 2025 +1030
+
+    should_cache check
+
+commit 0b033ba98c1d3bd0dbb440f698972dac7a02ddc2
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 13:02:15 2025 +1030
+
+    should_cache check
+
+commit 2f99113ec84651dbfa8d177d82991de6c1331321
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 12:31:27 2025 +1030
+
+    no cache and no store
+
+commit a3d536842d2d3266c9516be457da779d74aa9820
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Fri Mar 28 12:23:40 2025 +1030
+
+    caching control
+
+commit c2344a38e49300d05cadfa9ce36f9c37f3678df6
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 23:27:35 2025 +1030
+
+    comments for implementations
+
+commit 82fe3b77b80201cf81d15893eeb9055841d16b83
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 23:24:51 2025 +1030
+
+    comments for implementations/ documentations
+
+commit b3eb71c3d42005eee3c27de71fe587785d76a664
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 16:04:48 2025 +1030
+
+    remove flagging, already implemented
+
+commit 03ceac3781f24ac547ad36c56d1c72020a904ade
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 15:46:29 2025 +1030
+
+    Encoding data sent back to client
+
+commit 6211ef6424f27384da911c68d0996d9ee836920f
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 13:26:45 2025 +1030
+
+    fixing issues with cache hit
+
+commit a3724f3d84f26a6e3a97c09e5f7ac5212a1fc6cb
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 13:00:53 2025 +1030
+
+    Added default port if not specified by host
+
+commit 1da6357a7e82c72dccc73d58a15fcf38e71295dc
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 12:51:58 2025 +1030
+
+    adding implementations for send response back to clients, caching response in proxy
+
+commit 0ddc457ab774b49caad2ffbf1cbc537b6a6bd0f1
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Thu Mar 27 12:36:45 2025 +1030
+
+    Create original server socket connection for cache MISS
+
+commit 1d1a5d59c9954bcdce7559fcf98ae9f6b8dd2b80
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 24 23:48:34 2025 +1030
+
+    testing for cache hit
+
+commit 829492ee9ac144e32d8656ff7e22930ccae1ac66
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 24 12:38:04 2025 +1030
+
+    clients sockets created
+
+commit 09054342db62c0b8192982258f73760c7df4ee36
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 24 11:48:18 2025 +1030
+
+    Server socket created for proxy
+
+commit 3c40ac8995c997098c2a927f937daec02b45a0f1
+Author: sa1pa1 <sallybuipham@gmail.com>
+Date:   Mon Mar 24 11:36:57 2025 +1030
+
+    identified the steps in Step 1 & 2
