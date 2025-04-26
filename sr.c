@@ -105,6 +105,9 @@ void A_input(struct pkt packet)
               printf("----A: ACK %d is not a duplicate\n",packet.acknum);
             new_ACKs++;
 
+            //mark this packet as acked. 
+            ACKed[index] = true;
+            
             /* cumulative acknowledgement - determine how many packets are ACKed */
             // if (packet.acknum >= seqfirst)
         //       ackcount = packet.acknum + 1 - seqfirst;
