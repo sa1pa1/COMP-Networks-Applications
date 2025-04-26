@@ -96,6 +96,7 @@ void A_output(struct msg message)
     /* windowlast will always be 0 for alternating bit; but not for GoBackN */
     windowlast = (windowlast + 1) % WINDOWSIZE; 
     buffer[windowlast] = sendpkt;
+    ACKed[windowlast] = false;  /* SR: Mark new packet as not yet ACKed */
     windowcount++;
 
     /* send out packet */
