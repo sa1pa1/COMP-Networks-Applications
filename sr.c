@@ -80,6 +80,7 @@ void A_input(struct pkt packet)
     int ackcount = 0;
     int i;
     int index = -1;
+    bool window_changed = false;
 
     /* if received ACK is not corrupted */
     if (!IsCorrupted(packet))
@@ -118,18 +119,23 @@ void A_input(struct pkt packet)
                 {
                     /* SR: Slide window only when base packet is ACKed
                        In GBN, window slides based on highest ACK received
-                       In SR, window slides incrementally past consecutive ACKed packets 
+                       In SR, window slides incrementally past consecutive ACKed packets
                     */
                     ACKed[windowfirst] = false; /* reset for reuse */
-                    
+
                     windowfirst = (windowfirst + 1) % WINDOWSIZE;
                     windowcount--;
+                    window_changed = true;
                 }
 
-                /* start timer again if there are still more unacked packets in window */
-                stoptimer(A);
-                if (windowcount > 0)
-                    starttimer(A, RTT);
+                /* SR: Only reset timer if window position changed
+                   In SR, we don't reset timer for every ACK received */
+                if (window_changed)
+                {
+                    stoptimer(A);
+                    if (windowcount > 0)
+                        starttimer(A, RTT);
+                }
             }
         }
         else if (TRACE > 0)
