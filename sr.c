@@ -7,7 +7,11 @@
 /* ******************************************************************
    Selective Repeat protocol. Adapted from GBN implementation.
 
-  add comments
+    Key differences from Go-Back-N:
+   1. Receiver buffers out-of-order packets instead of discarding them
+   2. Sender resends only specific unacknowledged packets, not entire window
+   3. Individual ACKs for packets instead of cumulative acknowledgments
+   4. Larger sequence number space (at least 2x window size)
 **********************************************************************/
 
 #define RTT 16.0
@@ -52,7 +56,6 @@ static int windowcount;               /* the number of packets currently awaitin
 static int A_nextseqnum;              /* the next sequence number to be used by the sender */
 
 static bool ACKed[WINDOWSIZE];          /* array to track which packets have been ACKed */
-static double packet_timer[WINDOWSIZE]; /* tracking the expiry timer for each packet */
 
 /* the following routine will be called once (only) before any other */
 /* entity A routines are called. You can use it to do any initialization */
@@ -71,7 +74,6 @@ void A_init(void)
     for (int i = 0; i < WINDOWSIZE; i++)
     {
         ACKed[i] = false;
-        packet_timer[i] = 0.0;
     }
 }
 /* called from layer 5 (application layer), passed the message to be sent to other side */
