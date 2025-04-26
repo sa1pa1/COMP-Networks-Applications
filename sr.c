@@ -74,7 +74,53 @@ void A_init(void)
         packet_timer[i] = 0.0;
     }
 }
+/* called from layer 5 (application layer), passed the message to be sent to other side */
+void A_output(struct msg message)
+{
+  struct pkt sendpkt;
+  int i;
 
+  /* if not blocked waiting on ACK */
+  if ( windowcount < WINDOWSIZE) {
+    if (TRACE > 1)
+      printf("----A: New message arrives, send window is not full, send new messge to layer3!\n");
+
+    /* create packet */
+    sendpkt.seqnum = A_nextseqnum;
+    sendpkt.acknum = NOTINUSE;
+    for ( i=0; i<20 ; i++ ) 
+      sendpkt.payload[i] = message.data[i];
+    sendpkt.checksum = ComputeChecksum(sendpkt); 
+
+    /* put packet in window buffer */
+    /* windowlast will always be 0 for alternating bit; but not for GoBackN */
+    windowlast = (windowlast + 1) % WINDOWSIZE; 
+    buffer[windowlast] = sendpkt;
+    windowcount++;
+
+    /* send out packet */
+    if (TRACE > 0)
+      printf("Sending packet %d to layer 3\n", sendpkt.seqnum);
+    tolayer3 (A, sendpkt);
+
+    /* start timer if first packet in window */
+    if (windowcount == 1)
+      starttimer(A,RTT);
+
+    /* get next sequence number, wrap back to 0 */
+    A_nextseqnum = (A_nextseqnum + 1) % SEQSPACE;  
+  }
+  /* if blocked,  window is full */
+  else {
+    if (TRACE > 0)
+      printf("----A: New message arrives, send window is full\n");
+    window_full++;
+  }
+}
+
+/* called from layer 3, when a packet arrives for layer 4 
+   In this practical this will always be an ACK as B never sends data.
+*/
 void A_input(struct pkt packet)
 {
     int ackcount = 0;
