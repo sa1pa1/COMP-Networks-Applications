@@ -78,6 +78,7 @@ void A_input(struct pkt packet)
 {
   int ackcount = 0;
   int i;
+  int index = -1;
 
   /* if received ACK is not corrupted */ 
   if (!IsCorrupted(packet)) {
@@ -87,11 +88,17 @@ void A_input(struct pkt packet)
 
     /* check if new ACK or duplicate */
     if (windowcount != 0) {
-          int seqfirst = buffer[windowfirst].seqnum;
-          int seqlast = buffer[windowlast].seqnum;
-          /* check case when seqnum has and hasn't wrapped */
-          if (((seqfirst <= seqlast) && (packet.acknum >= seqfirst && packet.acknum <= seqlast)) ||
-              ((seqfirst > seqlast) && (packet.acknum >= seqfirst || packet.acknum <= seqlast))) {
+          /* find which packet in window this ACK is for */
+      for (i = 0; i < windowcount; i++) {
+        int pos = (windowfirst + i) % WINDOWSIZE;
+        if (buffer[pos].seqnum == packet.acknum) {
+          index = pos;
+          break;
+        }
+      }
+
+      /* if we found the packet this ACK is for and it hasn't been ACKed yet */
+      if (index != -1 && !ACKed[index]) {
 
             /* packet is a new ACK */
             if (TRACE > 0)
@@ -99,16 +106,16 @@ void A_input(struct pkt packet)
             new_ACKs++;
 
             /* cumulative acknowledgement - determine how many packets are ACKed */
-            if (packet.acknum >= seqfirst)
-              ackcount = packet.acknum + 1 - seqfirst;
-            else
-              ackcount = SEQSPACE - seqfirst + packet.acknum;
+            // if (packet.acknum >= seqfirst)
+        //       ackcount = packet.acknum + 1 - seqfirst;
+        //     else
+        //       ackcount = SEQSPACE - seqfirst + packet.acknum;
 
-	    /* slide window by the number of packets ACKed */
-            windowfirst = (windowfirst + ackcount) % WINDOWSIZE;
+	    // /* slide window by the number of packets ACKed */
+        //     windowfirst = (windowfirst + ackcount) % WINDOWSIZE;
 
-            /* delete the acked packets from window buffer */
-            for (i=0; i<ackcount; i++)
+        //     /* delete the acked packets from window buffer */
+        //     for (i=0; i<ackcount; i++)
               windowcount--;
 
 	    /* start timer again if there are still more unacked packets in window */
