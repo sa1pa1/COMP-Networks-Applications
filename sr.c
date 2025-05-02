@@ -268,6 +268,25 @@ void B_input(struct pkt packet)
             if (!received[idx]) {
                 received[idx] = true;
                 buffer[idx] = packet;
+                
+            
+            /* Deliver consecutive packets in order */
+            while (received[0]) {
+            /* deliver to receiving application */
+            tolayer5(B, buffer[0].payload);
+        
+            /* Shift window and update base */
+            receive_base = (receive_base + 1) % SEQSPACE;
+        
+            /* Shift buffer - move all packets down by 1 */
+            for (int i = 0; i < WINDOWSIZE - 1; i++) {
+                received[i] = received[i + 1];
+                buffer[i] = buffer[i + 1];
+             }
+        
+        /* Clear the last slot */
+        received[WINDOWSIZE - 1] = false;
+    }
             }
             
             /* Send ACK for this packet */
