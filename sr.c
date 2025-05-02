@@ -292,10 +292,35 @@ void B_input(struct pkt packet)
             /* Send ACK for this packet */
             sendpkt.acknum = packet.seqnum;
         } else {
-            /* Packet outside window - still need to handle duplicates */
+            /* Packet outside window - could be a duplicate from earlier window */
             if (TRACE > 0)
-                printf("----B: packet %d is outside receive window\n", packet.seqnum);
-            return;
+                printf("----B: packet %d is outside receive window, may be a duplicate\n", packet.seqnum);
+            //handling duplicate packets
+            /* Check if it's from previous window positions (already delivered) */
+            int prev_end = receive_base - 1;
+            if (prev_end < 0) prev_end += SEQSPACE;
+            
+            int prev_start = (prev_end - WINDOWSIZE + 1) % SEQSPACE;
+            if (prev_start < 0) prev_start += SEQSPACE;
+            
+            bool in_prev_window = false;
+            if (prev_start <= prev_end) {
+                in_prev_window = (packet.seqnum >= prev_start && packet.seqnum <= prev_end);
+            } else {
+                in_prev_window = (packet.seqnum >= prev_start || packet.seqnum <= prev_end);
+            }
+            
+            if (in_prev_window) {
+                /* ACK duplicate packets from previous window positions */
+                if (TRACE > 0)
+                    printf("----B: duplicate packet %d, send ACK anyway\n", packet.seqnum);
+                sendpkt.acknum = packet.seqnum;
+            } else {
+                /* Packet is too far ahead, outside of window */
+                if (TRACE > 0)
+                    printf("----B: packet %d is too far ahead, discard\n", packet.seqnum);
+                return; /* Don't ACK packets too far ahead */
+            }
         }
     } else {
         /* Packet is corrupted */
