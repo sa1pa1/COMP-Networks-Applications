@@ -194,6 +194,25 @@ void A_input(struct pkt packet)
         printf("----A: corrupted ACK is received, do nothing!\n");
 }
 
+/* called when A's timer goes off */
+void A_timerinterrupt(void)
+{
+    if (TRACE > 0)
+        printf("----A: time out, resend packets!\n");
+
+    /* SR: Only resend the base packet, not the entire window as in GBN */
+    if (windowcount > 0) {
+        if (TRACE > 0)
+            printf("---A: resending packet %d\n", buffer[windowfirst].seqnum);
+
+        tolayer3(A, buffer[windowfirst]);
+        packets_resent++;
+        
+        /* restart timer for this packet */
+        starttimer(A, RTT);
+    }
+}
+
 /********* Receiver (B)  variables and procedures ************/
 /* the following routine will be called once (only) before any other */
 /* entity B routines are called. You can use it to do any initialization */
