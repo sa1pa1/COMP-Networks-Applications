@@ -324,7 +324,7 @@ void B_input(struct pkt packet)
         /*SR: When a corrupted packet is received, the receiver doesn't send an ACK at all
             This causes the sender to time out and retransmit only that specific packet*/
     if (TRACE > 0) 
-      printf("----B: packet corrupted, no ACK sent!\n");
+    
         return;
     }
 
