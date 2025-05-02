@@ -257,13 +257,25 @@ void B_input(struct pkt packet)
         if (in_window) {
             if (TRACE > 0)
                 printf("----B: packet %d is correctly received, send ACK!\n", packet.seqnum);
-            /* Still need to bufferi */
+            packets_received++;
+            
+            /* Calculate buffer position for this sequence number */
+            int idx = (packet.seqnum - receive_base) % SEQSPACE;
+            if (idx < 0) idx += SEQSPACE;
+            idx = idx % WINDOWSIZE;
+            
+            /* Store packet in buffer if not already received */
+            if (!received[idx]) {
+                received[idx] = true;
+                buffer[idx] = packet;
+            }
+            
+            /* Send ACK for this packet */
             sendpkt.acknum = packet.seqnum;
         } else {
-            /* Packet outside window */
+            /* Packet outside window - still need to handle duplicates */
             if (TRACE > 0)
                 printf("----B: packet %d is outside receive window\n", packet.seqnum);
-            /* duplicate handling */
             return;
         }
     } else {
