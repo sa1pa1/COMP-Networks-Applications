@@ -220,6 +220,7 @@ void A_timerinterrupt(void)
 static int B_nextseqnum;          /* the sequence number for the next packets sent by B */
 static int receive_base;          /* base of the receiver window */
 static bool received[WINDOWSIZE]; /* tracks which packets have been received */
+static struct pkt buffer[WINDOWSIZE]; /*buffer for out of order packet, SR component*/
 
 void B_init(void)
 {
@@ -232,7 +233,53 @@ void B_init(void)
         received[i] = false;
     }
 }
-// incomplete
+
+
+/* called from layer 3, when a packet arrives for layer 4 at B*/
+void B_input(struct pkt packet)
+{
+  struct pkt sendpkt;
+  int i;
+
+  /* if not corrupted and received packet is in order */
+  if  ( (!IsCorrupted(packet))  && (packet.seqnum == expectedseqnum) ) {
+    if (TRACE > 0)
+      printf("----B: packet %d is correctly received, send ACK!\n",packet.seqnum);
+    packets_received++;
+
+    /* deliver to receiving application */
+    tolayer5(B, packet.payload);
+
+    /* send an ACK for the received packet */
+    sendpkt.acknum = expectedseqnum;
+
+    /* update state variables */
+    expectedseqnum = (expectedseqnum + 1) % SEQSPACE;        
+  }
+  else {
+    /* packet is corrupted or out of order resend last ACK */
+    if (TRACE > 0) 
+      printf("----B: packet corrupted or not expected sequence number, resend ACK!\n");
+    if (expectedseqnum == 0)
+      sendpkt.acknum = SEQSPACE - 1;
+    else
+      sendpkt.acknum = expectedseqnum - 1;
+  }
+
+  /* create packet */
+  sendpkt.seqnum = B_nextseqnum;
+  B_nextseqnum = (B_nextseqnum + 1) % 2;
+    
+  /* we don't have any data to send.  fill payload with 0's */
+  for ( i=0; i<20 ; i++ ) 
+    sendpkt.payload[i] = '0';  
+
+  /* computer checksum */
+  sendpkt.checksum = ComputeChecksum(sendpkt); 
+
+  /* send out packet */
+  tolayer3 (B, sendpkt);
+}
 /******************************************************************************
  * The following functions need be completed only for bi-directional messages *
  *****************************************************************************/
