@@ -199,7 +199,7 @@ void A_input(struct pkt packet)
 void A_timerinterrupt(void)
 {
     if (TRACE > 0)
-        printf("----A: time out, resend packets!\n");
+        printf("----A: time out,resend packets!\n");
 
     /* SR: Only resend the base packet, not the entire window as in GBN */
     if (windowcount > 0) {
@@ -241,19 +241,17 @@ void B_input(struct pkt packet)
 {
     struct pkt sendpkt;
     int i;
-    int idx;
-    int receive_end;
-    bool in_window = false;
-    int prev_end;
-    int prev_start;
-    bool in_prev_window = false;
     
     /* if not corrupted */
     if (!IsCorrupted(packet)) {
-        /* Calculate window boundaries */
-        receive_end = (receive_base + WINDOWSIZE - 1) % SEQSPACE;
+        if (TRACE > 0)
+            printf("----B: packet %d is correctly received, send ACK!\n", packet.seqnum);
+        packets_received++;
         
         /* Check if packet is within receive window */
+        int receive_end = (receive_base + WINDOWSIZE - 1) % SEQSPACE;
+        bool in_window = false;
+        
         if (receive_base <= receive_end) {
             in_window = (packet.seqnum >= receive_base && packet.seqnum <= receive_end);
         } else {
@@ -262,12 +260,8 @@ void B_input(struct pkt packet)
         }
         
         if (in_window) {
-            if (TRACE > 0)
-                printf("----B: packet %d is correctly received, send ACK!\n", packet.seqnum);
-            packets_received++;
-            
             /* Calculate buffer position for this sequence number */
-            idx = (packet.seqnum - receive_base);
+            int idx = (packet.seqnum - receive_base);
             if (idx < 0) 
                 idx += SEQSPACE;
             idx = idx % WINDOWSIZE;
@@ -295,45 +289,10 @@ void B_input(struct pkt packet)
                     received[WINDOWSIZE - 1] = false;
                 }
             }
-            
-            /* Send ACK for this packet */
-            sendpkt.acknum = packet.seqnum;
-        } else {
-            /* Packet outside window - could be a duplicate from earlier window */
-            if (TRACE > 0)
-                printf("----B: packet %d is outside receive window, may be a duplicate\n", packet.seqnum);
-            /* handling duplicate packets */
-            
-            /* Count duplicates in packets_received for compatibility with test */
-            packets_received++;
-            
-            /* Check if it's from previous window positions (already delivered) */
-            prev_end = (receive_base - 1);
-            if (prev_end < 0) 
-                prev_end += SEQSPACE;
-            
-            prev_start = (prev_end - WINDOWSIZE + 1);
-            if (prev_start < 0) 
-                prev_start += SEQSPACE;
-            
-            if (prev_start <= prev_end) {
-                in_prev_window = (packet.seqnum >= prev_start && packet.seqnum <= prev_end);
-            } else {
-                in_prev_window = (packet.seqnum >= prev_start || packet.seqnum <= prev_end);
-            }
-            
-            if (in_prev_window) {
-                /* ACK duplicate packets from previous window positions */
-                if (TRACE > 0)
-                    printf("----B: duplicate packet %d, send ACK anyway\n", packet.seqnum);
-                sendpkt.acknum = packet.seqnum;
-            } else {
-                /* Packet is too far ahead, outside of window */
-                if (TRACE > 0)
-                    printf("----B: packet %d is too far ahead, discard\n", packet.seqnum);
-                return; /* Don't ACK packets too far ahead */
-            }
         }
+        
+        /* Send ACK for this packet whether it's in window or not */
+        sendpkt.acknum = packet.seqnum;
     } else {
         /* Packet is corrupted */
         /*SR: When a corrupted packet is received, the receiver doesn't send an ACK at all
