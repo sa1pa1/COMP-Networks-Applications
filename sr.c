@@ -140,12 +140,12 @@ void A_input(struct pkt packet)
               printf("----A: ACK %d is not a duplicate\n",packet.acknum);
             new_ACKs++;
 
-            /* cumulative acknowledgement - determine how many packets are ACKed */
+            /* Mark this packet as acked */
                 ACKed[index] = true;
 
                 while (windowcount > 0 && ACKed[windowfirst])
                 {
-                    /* SR: Slide window only when base packet is ACKed
+                    /* according to SR: Slide window only when base packet is ACKed
                        In GBN, window slides based on highest ACK received
                        In SR, window slides incrementally past consecutive ACKed packets
                     */
@@ -309,7 +309,7 @@ void B_input(struct pkt packet)
         sendpkt.acknum = packet.seqnum;
     } else {
         /* Packet is corrupted */
-        /*SR: When a corrupted packet is received, the receiver doesn't send an ACK at all
+        /*According to SR: When a corrupted packet is received, the receiver doesn't resend an ACK at all
             This causes the sender to time out and retransmit only that specific packet*/
     if (TRACE > 0) 
         return;
