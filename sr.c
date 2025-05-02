@@ -241,6 +241,12 @@ void B_input(struct pkt packet)
 {
     struct pkt sendpkt;
     int i;
+    int idx;
+    int receive_end;
+    bool in_window = false;
+    int prev_end;
+    int prev_start;
+    bool in_prev_window = false;
     
     /* if not corrupted */
     if (!IsCorrupted(packet)) {
@@ -248,10 +254,10 @@ void B_input(struct pkt packet)
             printf("----B: packet %d is correctly received, send ACK!\n", packet.seqnum);
         packets_received++;
         
-        /* Check if packet is within receive window */
-        int receive_end = (receive_base + WINDOWSIZE - 1) % SEQSPACE;
-        bool in_window = false;
+        /* Calculate window boundaries */
+        receive_end = (receive_base + WINDOWSIZE - 1) % SEQSPACE;
         
+        /* Check if packet is within receive window */
         if (receive_base <= receive_end) {
             in_window = (packet.seqnum >= receive_base && packet.seqnum <= receive_end);
         } else {
@@ -261,7 +267,7 @@ void B_input(struct pkt packet)
         
         if (in_window) {
             /* Calculate buffer position for this sequence number */
-            int idx = (packet.seqnum - receive_base);
+            idx = (packet.seqnum - receive_base);
             if (idx < 0) 
                 idx += SEQSPACE;
             idx = idx % WINDOWSIZE;
@@ -289,9 +295,29 @@ void B_input(struct pkt packet)
                     received[WINDOWSIZE - 1] = false;
                 }
             }
+        } else {
+            /* Packet outside window */
+            prev_end = (receive_base - 1);
+            if (prev_end < 0) 
+                prev_end += SEQSPACE;
+            
+            prev_start = (prev_end - WINDOWSIZE + 1);
+            if (prev_start < 0) 
+                prev_start += SEQSPACE;
+            
+            if (prev_start <= prev_end) {
+                in_prev_window = (packet.seqnum >= prev_start && packet.seqnum <= prev_end);
+            } else {
+                in_prev_window = (packet.seqnum >= prev_start || packet.seqnum <= prev_end);
+            }
+            
+            if (!in_prev_window) {
+                /* Packet is too far ahead - don't ACK */
+                return;
+            }
         }
         
-        /* Send ACK for this packet whether it's in window or not */
+        /* Send ACK for this packet (if we got here) */
         sendpkt.acknum = packet.seqnum;
     } else {
         /* Packet is corrupted */
