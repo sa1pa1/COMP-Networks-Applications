@@ -1,0 +1,239 @@
+commit a4368411812d7dcae5f8afdbb4752f9f1b1a4178
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat May 3 00:42:52 2025 +0930
+
+    clarity in comments
+
+ sr.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+commit 4f0f1b1049c53f10427810292a7e9904f60d36d6
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat May 3 00:39:15 2025 +0930
+
+    clean up code, added more comments for implementations
+
+ sr.c | 179 ++++++++++++++++++++++++++++++++++---------------------------------
+ 1 file changed, 91 insertions(+), 88 deletions(-)
+
+commit 20b5a48e79cb157dbe9c0ea4ab357a3e2a95006a
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 23:06:13 2025 +0930
+
+    remove the printing for noACK send
+
+ sr.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+commit 1893f2ac1c3b84448c5849e883e6bf0afa8c472a
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 22:36:50 2025 +0930
+
+    reimplement too far ahead check but remove printing
+
+ sr.c | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
+
+commit 0149f882a49388a80ccd3f1ea09880cabe0208d1
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 22:30:16 2025 +0930
+
+    remove too far ahead check
+
+ sr.c | 63 +++++++++++----------------------------------------------------
+ 1 file changed, 11 insertions(+), 52 deletions(-)
+
+commit 8517e19a2543aba90d537fdfb9f748e403dda854
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 22:03:39 2025 +0930
+
+    accumulate pacets_Received
+
+ sr.c | 24 ++++++++++++++++--------
+ 1 file changed, 16 insertions(+), 8 deletions(-)
+
+commit b49ec4c2ef042e7009c20e7ce6f5907e28f997f0
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 21:22:39 2025 +0930
+
+    fix comment lines and warnings
+
+ sr.c | 90 +++++++++++++++++++++++++++++++++++---------------------------------
+ sr.h |  3 ++-
+ 2 files changed, 49 insertions(+), 44 deletions(-)
+
+commit dcde75a1decc4e968e91d6131a30742e94b16f9e
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 21:05:43 2025 +0930
+
+    handling duplicate files
+
+ sr.c | 31 ++++++++++++++++++++++++++++---
+ 1 file changed, 28 insertions(+), 3 deletions(-)
+
+commit 681eb2b212c75f2998e72ded5b3307d5a9ef1bea
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 20:40:00 2025 +0930
+
+    delivering in order packets
+
+ sr.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+commit 3c304c9e79f171d40cf532260ef1da09e1a14563
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 20:05:56 2025 +0930
+
+    buffering mechanism for out-of-order packets in B_input
+
+ sr.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
+
+commit 7e21eae8342cbd7403152f92c9021c0a4f931890
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 15:56:15 2025 +0930
+
+    checking if packets are within window
+
+ sr.c | 59 ++++++++++++++++++++++++++++++++++-------------------------
+ 1 file changed, 34 insertions(+), 25 deletions(-)
+
+commit a92c41aa8b2b702c1eaf6d58244bc24295caa2e8
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 15:21:14 2025 +0930
+
+    added original B_input of gnb to sr and then add buffer array
+
+ sr.c | 49 ++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 48 insertions(+), 1 deletion(-)
+
+commit 197667472d43fbd4ea3e4a940bca988dae8762bb
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri May 2 15:15:57 2025 +0930
+
+    timer handling from receiving side (A) in sr.c
+
+ sr.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+commit 5e689376078234a121632dc013015f25289dea8e
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 23:04:22 2025 +0930
+
+    removed individual timers
+
+ sr.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
+
+commit a1531ac2e658158969277539d0dd476074469102
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:59:24 2025 +0930
+
+    packet created marked as Acked=false
+
+ sr.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+commit 565d5d46f44ceb79d299f3e0838dc2f56abdea7c
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:57:20 2025 +0930
+
+    added A_output from gbn.c
+
+ sr.c | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 46 insertions(+)
+
+commit f05e8152b31ba47848a600522bbb591383d4a0ae
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:53:41 2025 +0930
+
+    A_input timer functionality
+
+ sr.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+commit 0022fb6403f0323d3aa2e1dffe551185bdfbdb13
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:32:37 2025 +0930
+
+    window slide mechanisms in A_input
+
+ sr.c | 219 ++++++++++++++++++++++++++++++++++---------------------------------
+ 1 file changed, 110 insertions(+), 109 deletions(-)
+
+commit f07a82ae7def638d7c3585e22cc85ebaeb4fb503
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:26:54 2025 +0930
+
+    changing state of acked packet
+
+ sr.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+commit c616419fe5843175c08b4ec6bf4f12fea8bae8c3
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:25:14 2025 +0930
+
+    Modify A_input to implement Selective Repeat acknowledgment handling
+
+ sr.c | 33 ++++++++++++++++++++-------------
+ 1 file changed, 20 insertions(+), 13 deletions(-)
+
+commit dc6b824c84113687ac9efa5cf15b942f79709887
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Sat Apr 26 22:16:45 2025 +0930
+
+    add A_input from gbn.c
+
+ sr.c | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 54 insertions(+)
+
+commit 777d52bb51a2d2a2075358b2e53577ba5aaf053e
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri Apr 25 21:25:08 2025 +0930
+
+    A_init and B_init created
+
+ sr.c | 66 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 65 insertions(+), 1 deletion(-)
+
+commit 90b8e6892c4adf336d797c257afc27be809f5484
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri Apr 25 16:42:22 2025 +0930
+
+    add ComputeChecksum and IsCorrupted to sr.c
+
+ sr.c | 31 ++++++++++++++++++++++++++++++-
+ 1 file changed, 30 insertions(+), 1 deletion(-)
+
+commit 17b49f5ad9d08b6c04f85aee6d9cf6eded3efde5
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri Apr 25 16:38:03 2025 +0930
+
+    define variables for sr.hc -> sequence space doubled
+
+ sr.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+commit 0ae477f01a47bae2d14384c11327bf3ff481289b
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri Apr 25 16:31:51 2025 +0930
+
+    intiailise SR file
+
+ sr.c | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+commit 22686bb67673d3927ff939a7c618b4de8a31f460
+Author: sallybui <sallybuipham@gmail.com>
+Date:   Fri Apr 25 15:38:56 2025 +0930
+
+    added all files to branch - sr.c and sr.h created
+
+ emulator.c | 478 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ emulator.h |  40 ++++++
+ gbn.c      | 275 +++++++++++++++++++++++++++++++++++
+ gbn.h      |  11 ++
+ sr.c       |   0
+ sr.h       |  11 ++
+ 6 files changed, 815 insertions(+)
