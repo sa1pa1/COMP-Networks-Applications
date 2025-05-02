@@ -234,39 +234,48 @@ void B_init(void)
     }
 }
 
-
 /* called from layer 3, when a packet arrives for layer 4 at B*/
 void B_input(struct pkt packet)
 {
   struct pkt sendpkt;
   int i;
 
-  /* if not corrupted and received packet is in order */
-  if  ( (!IsCorrupted(packet))  && (packet.seqnum == expectedseqnum) ) {
-    if (TRACE > 0)
-      printf("----B: packet %d is correctly received, send ACK!\n",packet.seqnum);
-    packets_received++;
-
-    /* deliver to receiving application */
-    tolayer5(B, packet.payload);
-
-    /* send an ACK for the received packet */
-    sendpkt.acknum = expectedseqnum;
-
-    /* update state variables */
-    expectedseqnum = (expectedseqnum + 1) % SEQSPACE;        
-  }
-  else {
-    /* packet is corrupted or out of order resend last ACK */
+    /* if not corrupted */
+    if (!IsCorrupted(packet)) {
+        /* Calculate window boundaries */
+        int receive_end = (receive_base + WINDOWSIZE - 1) % SEQSPACE;
+        bool in_window = false;
+        
+        /* Check if packet is within receive window */
+        if (receive_base <= receive_end) {
+            in_window = (packet.seqnum >= receive_base && packet.seqnum <= receive_end);
+        } else {
+            /* Handle wrap-around case */
+            in_window = (packet.seqnum >= receive_base || packet.seqnum <= receive_end);
+        }
+        
+        if (in_window) {
+            if (TRACE > 0)
+                printf("----B: packet %d is correctly received, send ACK!\n", packet.seqnum);
+            /* Still need to bufferi */
+            sendpkt.acknum = packet.seqnum;
+        } else {
+            /* Packet outside window */
+            if (TRACE > 0)
+                printf("----B: packet %d is outside receive window\n", packet.seqnum);
+            /* duplicate handling */
+            return;
+        }
+    } else {
+        /* Packet is corrupted */
+        /*SR: When a corrupted packet is received, the receiver doesn't send an ACK at all
+            This causes the sender to time out and retransmit only that specific packet*/
     if (TRACE > 0) 
-      printf("----B: packet corrupted or not expected sequence number, resend ACK!\n");
-    if (expectedseqnum == 0)
-      sendpkt.acknum = SEQSPACE - 1;
-    else
-      sendpkt.acknum = expectedseqnum - 1;
-  }
+      printf("----B: packet corrupted, no ACK sent!\n");
+        return;
+    }
 
-  /* create packet */
+    /* create ACK packet (same as GBN) */
   sendpkt.seqnum = B_nextseqnum;
   B_nextseqnum = (B_nextseqnum + 1) % 2;
     
